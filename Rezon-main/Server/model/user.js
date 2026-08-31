@@ -1,0 +1,130 @@
+import mongoose from "mongoose";
+
+const UserSchema = new mongoose.Schema({
+    uid: { 
+        type: String, 
+        required: true, 
+        unique: true,
+        index: true 
+    },
+    name: { 
+        type: String, 
+        required: true,
+        trim: true 
+    },
+    email: { 
+        type: String, 
+        required: true, 
+        unique: true,
+        lowercase: true,
+        index: true 
+    },
+    phoneNumber: { 
+        type: String, 
+        default: null,
+        // 🔥 REMOVED: unique, sparse, index from here
+    },
+    isPhoneVerified: {
+        type: Boolean,
+        default: false
+    },
+    profilePic: { 
+        type: String, 
+        default: "" 
+    },
+
+    fatherName: {
+        type: String,
+        default: "",
+        trim: true
+    },
+    cnicNumber: {
+        type: String,
+        default: null,
+        // 🔥 REMOVED: unique, sparse, index from here
+    },
+    dateOfBirth: {
+        type: String,
+        default: ""
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other', ''],
+        default: ''
+    },
+
+    isVerified: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
+    idCardFront: { type: String, default: "" },
+    idCardBack: { type: String, default: "" },
+    verificationStatus: {
+        type: String,
+        enum: ['Unverified', 'Pending', 'Verified', 'Rejected'],
+        default: 'Unverified',
+        index: true
+    },
+
+    kycDocuments: {
+        idFront: { type: String, default: "" },
+        idBack: { type: String, default: "" },
+        selfie: { type: String, default: "" }
+    },
+    kycDetails: {
+        method: { type: String, default: "" },
+        aiCheck: { type: Boolean, default: false },
+        faceMatchScore: { type: Number, default: 0 },
+        reason: { type: String, default: "" },
+        ocrData: {
+            extracted: { type: Boolean, default: false },
+            rawText: { type: String, default: "" },
+            confidence: { type: String, default: "" }
+        }
+    },
+    verifiedAt: {
+        type: Date,
+        default: null
+    },
+
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    totalReviews: { type: Number, default: 0 },
+
+    warningCount: { type: Number, default: 0 },
+    isFlagged: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    isBanned: { type: Boolean, default: false },
+    status: {
+        type: String, 
+        enum: ['Active', 'Suspended', 'Banned'], 
+        default: 'Active' 
+    },
+
+    isOnline: { type: Boolean, default: false },
+    lastSeen: { type: Date, default: null },
+
+    notifications: [{
+        title: { type: String, required: true },
+        message: { type: String, required: true },
+        type: { 
+            type: String, 
+            enum: ['WARNING', 'AD_DELETED', 'AD_REJECTED', 'MESSAGE', 'VERIFICATION', 'SYSTEM'],
+            default: 'SYSTEM'
+        },
+        read: { type: Boolean, default: false },
+        link: { type: String, default: '' },
+        createdAt: { type: Date, default: Date.now }
+    }]
+
+}, { timestamps: true });
+
+// ✅ Indexes sirf yahan define karo — duplicate mat karo
+UserSchema.index({ isVerified: 1, verificationStatus: 1 });
+UserSchema.index({ isActive: 1, isFlagged: 1 });
+UserSchema.index({ isBanned: 1, status: 1 });
+UserSchema.index({ cnicNumber: 1 }, { sparse: true, unique: true });
+UserSchema.index({ phoneNumber: 1 }, { sparse: true, unique: true });
+UserSchema.index({ "notifications.read": 1, "notifications.createdAt": -1 });
+
+export default mongoose.model("User", UserSchema);
