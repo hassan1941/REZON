@@ -10,7 +10,6 @@ import {
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBQvJ8cJ_c8q7lJrWHtHRDD9vdfgd4WSaw",
   authDomain: "otp-project-ef670.firebaseapp.com",
   projectId: "otp-project-ef670",
   storageBucket: "otp-project-ef670.appspot.com",
